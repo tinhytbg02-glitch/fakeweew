@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tạo Link Token Dài</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .box {
+      width: 90%;
+      max-width: 500px;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    input,
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    input {
+      background: #2a2a2a;
+      color: white;
+    }
+
+    button {
+      background: #00b894;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #result {
+      margin-top: 15px;
+      word-break: break-all;
+      background: #2a2a2a;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    a {
+      color: #74b9ff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>Tạo Link Token Dài</h2>
+
+    <input type="text" id="url" placeholder="Nhập link thật..." />
+
+    <button onclick="createTokenLink()">
+      Tạo Link
+    </button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function randomToken(length) {
+      const chars =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+      let result = "";
+
+      for (let i = 0; i < length; i++) {
+        result += chars.charAt(
+          Math.floor(Math.random() * chars.length)
+        );
+      }
+
+      return result;
+    }
+
+    function createTokenLink() {
+
+      const realUrl = document.getElementById("url").value;
+
+      if (!realUrl) {
+        alert("Nhập link trước");
+        return;
+      }
+
+      // tạo token giả dài
+      const token1 = randomToken(64);
+      const token2 = randomToken(64);
+      const token3 = randomToken(64);
+
+      // link giả mã token
+      const fakeLink =
+        window.location.origin +
+        "/r/p.asp?p=" +
+        token1 +
+        token2 +
+        token3;
+
+      document.getElementById("result").innerHTML = `
+      <b>Link token:</b><br><br>
+
+      <a href="${realUrl}" target="_blank">
+        ${fakeLink}
+      </a>
+    `;
+    }
+  </script>
+
+</body>
+
+</html>
