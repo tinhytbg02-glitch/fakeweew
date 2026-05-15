@@ -1,130 +1,69 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tạo Link Token Dài</title>
+  <meta charset="UTF-8">
+  <title>Tạo Link Token</title>
 
   <style>
-    body {
-      font-family: Arial;
-      background: #111;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+    body{
+      background:#111;
+      color:white;
+      font-family:Arial;
+      padding:40px;
     }
 
-    .box {
-      width: 90%;
-      max-width: 500px;
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    button{
+      padding:12px 20px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:16px;
     }
 
-    input,
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-
-    input {
-      background: #2a2a2a;
-      color: white;
-    }
-
-    button {
-      background: #00b894;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    #result {
-      margin-top: 15px;
-      word-break: break-all;
-      background: #2a2a2a;
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    a {
-      color: #74b9ff;
+    #result{
+      margin-top:20px;
+      word-break:break-all;
+      background:#222;
+      padding:15px;
+      border-radius:10px;
     }
   </style>
 </head>
-
 <body>
 
-  <div class="box">
-    <h2>Tạo Link Token Dài</h2>
+<h2>Tạo Link Giả Mã Token</h2>
 
-    <input type="text" id="url" placeholder="Nhập link thật..." />
+<button onclick="createLink()">Tạo Link</button>
 
-    <button onclick="createTokenLink()">
-      Tạo Link
-    </button>
+<div id="result"></div>
 
-    <div id="result"></div>
-  </div>
+<script>
+function randomToken(length){
+  const chars =
+    "abcdef0123456789";
 
-  <script>
-    function randomToken(length) {
-      const chars =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let token = "";
 
-      let result = "";
+  for(let i=0;i<length;i++){
+    token += chars.charAt(
+      Math.floor(Math.random()*chars.length)
+    );
+  }
 
-      for (let i = 0; i < length; i++) {
-        result += chars.charAt(
-          Math.floor(Math.random() * chars.length)
-        );
-      }
+  return token;
+}
 
-      return result;
-    }
+function createLink(){
 
-    function createTokenLink() {
+  const token = randomToken(120);
 
-      const realUrl = document.getElementById("url").value;
+  const link =
+    "https://yourdomain.com/r?p=" + token;
 
-      if (!realUrl) {
-        alert("Nhập link trước");
-        return;
-      }
-
-      // tạo token giả dài
-      const token1 = randomToken(64);
-      const token2 = randomToken(64);
-      const token3 = randomToken(64);
-
-      // link giả mã token
-      const fakeLink =
-        window.location.origin +
-        "/r/p.asp?p=" +
-        token1 +
-        token2 +
-        token3;
-
-      document.getElementById("result").innerHTML = `
-      <b>Link token:</b><br><br>
-
-      <a href="${realUrl}" target="_blank">
-        ${fakeLink}
-      </a>
-    `;
-    }
-  </script>
+  document.getElementById("result")
+    .innerHTML = link;
+}
+</script>
 
 </body>
-
 </html>
