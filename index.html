@@ -1,45 +1,199 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Protected Link</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Secure Access Gateway</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial;
+    }
+
+    body{
+      background:#020617;
+      color:white;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      overflow:hidden;
+    }
+
+    .box{
+      width:95%;
+      max-width:900px;
+      background:#0f172a;
+      border:1px solid #1e293b;
+      border-radius:24px;
+      padding:35px;
+      box-shadow:0 0 60px rgba(0,0,0,0.6);
+    }
+
+    h1{
+      font-size:28px;
+      margin-bottom:10px;
+      color:#38bdf8;
+    }
+
+    p{
+      color:#94a3b8;
+      margin-bottom:25px;
+      line-height:1.6;
+    }
+
+    button{
+      width:100%;
+      padding:16px;
+      border:none;
+      border-radius:16px;
+      font-size:16px;
+      background:#2563eb;
+      color:white;
+      cursor:pointer;
+      transition:0.2s;
+    }
+
+    button:hover{
+      transform:scale(1.02);
+      background:#3b82f6;
+    }
+
+    .urlbox{
+      margin-top:25px;
+      background:#020617;
+      border:1px solid #1e293b;
+      border-radius:16px;
+      padding:18px;
+      word-break:break-all;
+      line-height:1.8;
+      color:#38bdf8;
+      min-height:120px;
+    }
+
+    .status{
+      margin-top:20px;
+      color:#22c55e;
+      font-size:14px;
+    }
+
+  </style>
 </head>
 <body>
 
-<button onclick="openProtected()">
-  Mở Link
-</button>
+<div class="box">
+
+  <h1>Secure API Gateway</h1>
+
+  <p>
+    Generate protected access URL with temporary
+    authentication token & session validation.
+  </p>
+
+  <button onclick="generateSecureURL()">
+    Generate Protected URL
+  </button>
+
+  <div class="urlbox" id="result">
+    Waiting for generation...
+  </div>
+
+  <div class="status" id="status"></div>
+
+</div>
 
 <script>
 
-function randomToken(length){
+function randomString(length){
+
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  let result = "";
+
+  for(let i=0;i<length;i++){
+
+    result += chars.charAt(
+      Math.floor(Math.random()*chars.length)
+    );
+
+  }
+
+  return result;
+}
+
+function randomHex(length){
+
   const chars =
     "abcdef0123456789";
 
-  let out = "";
+  let result = "";
 
   for(let i=0;i<length;i++){
-    out += chars[
+
+    result += chars.charAt(
       Math.floor(Math.random()*chars.length)
-    ];
+    );
+
   }
 
-  return out;
+  return result;
 }
 
-function openProtected(){
+function generateSecureURL(){
 
-  const token = randomToken(120);
+  const accessToken =
+    randomHex(128);
 
-  // lưu session hợp lệ
+  const refreshToken =
+    randomHex(128);
+
+  const sessionKey =
+    randomString(48);
+
+  const deviceId =
+    randomString(24);
+
+  const clientId =
+    randomString(32);
+
+  const securityHash =
+    randomHex(64);
+
+  const fakeURL =
+`https://secure-auth-cloud.net/api/v3/gateway/session/validate/access?
+client_id=${clientId}
+&device_id=${deviceId}
+&session_key=${sessionKey}
+&access_token=${accessToken}
+&refresh_token=${refreshToken}
+&security_hash=${securityHash}
+&response_type=secure
+&authorization=bearer
+&api_version=v3.2.8`;
+
+  // lưu session chống copy
   sessionStorage.setItem(
-    "valid_access",
-    token
+    "secure_access",
+    securityHash
   );
 
-  // mở trang
-  window.location.href =
-    "page.html?token=" + token;
+  localStorage.setItem(
+    "secure_expire",
+    Date.now() + 15000
+  );
+
+  document.getElementById("result")
+    .innerText = fakeURL;
+
+  document.getElementById("status")
+    .innerText =
+    "Protected session generated successfully.";
+
 }
 
 </script>
