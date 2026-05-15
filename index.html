@@ -2,67 +2,46 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Tạo Link Token</title>
-
-  <style>
-    body{
-      background:#111;
-      color:white;
-      font-family:Arial;
-      padding:40px;
-    }
-
-    button{
-      padding:12px 20px;
-      border:none;
-      border-radius:10px;
-      cursor:pointer;
-      font-size:16px;
-    }
-
-    #result{
-      margin-top:20px;
-      word-break:break-all;
-      background:#222;
-      padding:15px;
-      border-radius:10px;
-    }
-  </style>
+  <title>Protected Link</title>
 </head>
 <body>
 
-<h2>Tạo Link Giả Mã Token</h2>
-
-<button onclick="createLink()">Tạo Link</button>
-
-<div id="result"></div>
+<button onclick="openProtected()">
+  Mở Link
+</button>
 
 <script>
+
 function randomToken(length){
   const chars =
     "abcdef0123456789";
 
-  let token = "";
+  let out = "";
 
   for(let i=0;i<length;i++){
-    token += chars.charAt(
+    out += chars[
       Math.floor(Math.random()*chars.length)
-    );
+    ];
   }
 
-  return token;
+  return out;
 }
 
-function createLink(){
+function openProtected(){
 
   const token = randomToken(120);
 
-  const link =
-    "https://yourdomain.com/r?p=" + token;
+  // lưu session hợp lệ
+  sessionStorage.setItem(
+    "valid_access",
+    token
+  );
 
-  document.getElementById("result")
-    .innerHTML = link;
+  // mở trang
+  window.location.href =
+    "page.html?token=" + token;
 }
+
 </script>
 
 </body>
