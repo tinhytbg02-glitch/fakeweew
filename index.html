@@ -2,23 +2,54 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Lưu Token</title>
+<title>Fake System URL</title>
+
+<style>
+
+body{
+    background:#0f1117;
+    color:white;
+    font-family:Arial;
+    padding:40px;
+}
+
+button{
+    padding:12px 18px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#2563eb;
+    color:white;
+}
+
+#result{
+    margin-top:20px;
+    word-break:break-all;
+}
+
+a{
+    color:#00bfff;
+}
+
+</style>
+
 </head>
 <body>
 
-<button onclick="createToken()">Tạo Token</button>
-<button onclick="showToken()">Xem Token Đã Lưu</button>
+<h2>System Session Generator</h2>
 
-<p id="result"></p>
+<button onclick="generateSystemURL()">
+Generate Session
+</button>
+
+<div id="result"></div>
 
 <script>
 
-<script>
-
-function randomToken(length){
+function randomHex(length){
 
     const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    'abcdef0123456789';
 
     let result = '';
 
@@ -31,33 +62,49 @@ function randomToken(length){
     }
 
     return result;
+
 }
 
-function openToken(){
+function generateSystemURL(){
 
-    const token = randomToken(120);
+    const token = randomHex(64);
 
-    const fakeUrl =
-    "/api/auth/session/" + token;
+    const routes = [
+
+        "/api/v2/auth/session/",
+        "/internal/core/access/",
+        "/system/security/token/",
+        "/gateway/oauth/session/",
+        "/service/api/connect/",
+        "/auth/controller/validate/"
+
+    ];
+
+    const route =
+    routes[Math.floor(Math.random()*routes.length)];
+
+    const fakeURL =
+    window.location.origin +
+    route +
+    token;
 
     // đổi URL trên thanh địa chỉ
-    history.pushState({}, '', fakeUrl);
+    history.pushState({},'',route + token);
 
-    // sau 1 giây mở web thật
-    setTimeout(()=>{
+    document.getElementById("result").innerHTML =
 
-        window.location.href =
-        "eo-m.health";
+    `
+    <div>
 
-    },1000);
+        <a href="${fakeURL}" target="_blank">
+        ${fakeURL}
+        </a>
+
+    </div>
+    `;
 
 }
 
-</script>
-
-<button onclick="openToken()">
-Open
-</button>
 </script>
 
 </body>
