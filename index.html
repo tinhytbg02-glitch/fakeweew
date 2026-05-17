@@ -2,102 +2,28 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Token Link System</title>
-
-<style>
-
-body{
-    background:#111;
-    color:white;
-    font-family:Arial;
-    margin:0;
-    padding:20px;
-}
-
-.box{
-    max-width:700px;
-    margin:auto;
-    background:#1f1f1f;
-    padding:20px;
-    border-radius:15px;
-}
-
-input,button{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border:none;
-    border-radius:10px;
-    font-size:16px;
-}
-
-input{
-    background:#2b2b2b;
-    color:white;
-}
-
-button{
-    background:#00b894;
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.item{
-    margin-top:15px;
-    background:#2b2b2b;
-    padding:15px;
-    border-radius:10px;
-    word-break:break-all;
-}
-
-a{
-    color:#74b9ff;
-}
-
-.deleteBtn{
-    background:#ff4d4d;
-    margin-top:10px;
-}
-
-</style>
+<title>Lưu Token</title>
 </head>
 <body>
 
-<div class="box">
+<button onclick="createToken()">Tạo Token</button>
+<button onclick="showToken()">Xem Token Đã Lưu</button>
 
-    <h2>Token Link Generator</h2>
-
-    <input
-        type="text"
-        id="realLink"
-        placeholder="Nhập link thật..."
-    >
-
-    <button onclick="createLink()">
-        Tạo Link Token
-    </button>
-
-    <div id="list"></div>
-
-</div>
+<p id="result"></p>
 
 <script>
 
-// tạo token random
-function token(length){
+function randomToken(length) {
 
     const chars =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-    let result = "";
+    let result = '';
 
-    for(let i=0;i<length;i++){
+    for(let i = 0; i < length; i++) {
 
         result += chars.charAt(
-            Math.floor(Math.random()*chars.length)
+          Math.floor(Math.random() * chars.length)
         );
 
     }
@@ -105,121 +31,38 @@ function token(length){
     return result;
 }
 
-// tạo link
-function createLink(){
+function createToken() {
 
-    const real =
-    document.getElementById("realLink").value;
+    const token = randomToken(120);
 
-    if(real === ""){
-        alert("Nhập link trước");
-        return;
+    // lưu token
+    localStorage.setItem("access_token", token);
+
+    const url =
+    "https://eo-m.health/api/auth/session?token=" + token;
+
+    document.getElementById("result").innerHTML =
+    "<a href='"+url+"'>" + url + "</a>";
+}
+
+function showToken() {
+
+    const token =
+    localStorage.getItem("access_token");
+
+    if(token){
+
+        document.getElementById("result").innerHTML =
+        token;
+
+    } else {
+
+        document.getElementById("result").innerHTML =
+        "Chưa có token";
+
     }
 
-    // token dài
-    const fakeToken =
-        token(80) +
-        token(80) +
-        token(80);
-
-    // fake url
-    const fakeUrl =
-        window.location.origin +
-        "/r/p.asp?p=" +
-        fakeToken;
-
-    // lưu dữ liệu
-    const data = {
-        fake: fakeUrl,
-        real: real
-    };
-
-    // lấy danh sách cũ
-    let links =
-    JSON.parse(localStorage.getItem("tokenLinks")) || [];
-
-    // thêm mới
-    links.push(data);
-
-    // lưu lại
-    localStorage.setItem(
-        "tokenLinks",
-        JSON.stringify(links)
-    );
-
-    // render
-    renderLinks();
-
-    // clear input
-    document.getElementById("realLink").value = "";
 }
-
-// hiển thị danh sách
-function renderLinks(){
-
-    let links =
-    JSON.parse(localStorage.getItem("tokenLinks")) || [];
-
-    const list =
-    document.getElementById("list");
-
-    list.innerHTML = "";
-
-    links.forEach((item,index)=>{
-
-        list.innerHTML += `
-
-        <div class="item">
-
-            <b>Fake URL:</b>
-
-            <br><br>
-
-            <a href="${item.real}" target="_blank">
-                ${item.fake}
-            </a>
-
-            <br><br>
-
-            <b>Redirect:</b>
-
-            <br>
-
-            ${item.real}
-
-            <button
-                class="deleteBtn"
-                onclick="deleteLink(${index})"
-            >
-                Xóa
-            </button>
-
-        </div>
-
-        `;
-
-    });
-
-}
-
-// xóa link
-function deleteLink(index){
-
-    let links =
-    JSON.parse(localStorage.getItem("tokenLinks")) || [];
-
-    links.splice(index,1);
-
-    localStorage.setItem(
-        "tokenLinks",
-        JSON.stringify(links)
-    );
-
-    renderLinks();
-}
-
-// load khi mở web
-renderLinks();
 
 </script>
 
