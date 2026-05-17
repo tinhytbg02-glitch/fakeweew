@@ -1,3 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Gateway</title>
+
+<style>
+
+body{
+    background:#0f1117;
+    color:white;
+    font-family:Arial;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    flex-direction:column;
+}
+
+button{
+    padding:14px 20px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+}
+
+#url{
+    margin-top:20px;
+    word-break:break-all;
+}
+
+</style>
+</head>
+<body>
+
+<h2>Session Gateway</h2>
+
+<button onclick="createSession()">
+Generate Session
+</button>
+
+<div id="url"></div>
+
 <script>
 
 function randomHex(length){
@@ -19,24 +66,22 @@ function randomHex(length){
 
 }
 
-function createURL(){
+function createSession(){
 
-    const token =
-    randomHex(64);
+    const token = randomHex(64);
+
+    const path =
+    "/api/v2/auth/session/" + token;
+
+    // đổi URL
+    window.history.pushState({},'',path);
 
     const fullURL =
+    window.location.origin + path;
 
-    "https://eo-m.health" +
-
-    "/api/v2/auth/session/" +
-
-    token;
-
-    document.body.innerHTML +=
-
+    document.getElementById("url").innerHTML =
     `
-    <br>
-    <a href="${fullURL}">
+    <a href="${fullURL}" style="color:#00bfff">
         ${fullURL}
     </a>
     `;
@@ -45,6 +90,5 @@ function createURL(){
 
 </script>
 
-<button onclick="createURL()">
-Generate
-</button>
+</body>
+</html>
