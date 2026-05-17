@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/abcdehvtncc?=0/:path*",
-      "destination": "google.com"
+      "destination": "eo-m.health"
     }
   ]
 }
