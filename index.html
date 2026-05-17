@@ -13,17 +13,19 @@
 
 <script>
 
-function randomToken(length) {
+<script>
+
+function randomToken(length){
 
     const chars =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
     let result = '';
 
-    for(let i = 0; i < length; i++) {
+    for(let i=0;i<length;i++){
 
         result += chars.charAt(
-          Math.floor(Math.random() * chars.length)
+            Math.floor(Math.random()*chars.length)
         );
 
     }
@@ -31,39 +33,31 @@ function randomToken(length) {
     return result;
 }
 
-function createToken() {
+function openToken(){
 
     const token = randomToken(120);
 
-    // lưu token
-    localStorage.setItem("access_token", token);
+    const fakeUrl =
+    "/api/auth/session/" + token;
 
-    const url =
-    "https://eo-m.health/api/auth/session?token=" + token;
+    // đổi URL trên thanh địa chỉ
+    history.pushState({}, '', fakeUrl);
 
-    document.getElementById("result").innerHTML =
-    "<a href='"+url+"'>" + url + "</a>";
-}
+    // sau 1 giây mở web thật
+    setTimeout(()=>{
 
-function showToken() {
+        window.location.href =
+        "eo-m.health";
 
-    const token =
-    localStorage.getItem("access_token");
-
-    if(token){
-
-        document.getElementById("result").innerHTML =
-        token;
-
-    } else {
-
-        document.getElementById("result").innerHTML =
-        "Chưa có token";
-
-    }
+    },1000);
 
 }
 
+</script>
+
+<button onclick="openToken()">
+Open
+</button>
 </script>
 
 </body>
