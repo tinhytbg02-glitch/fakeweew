@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/abcdehvtncc?=0/:path*",
+      "destination": "eo-m.com"
     }
   ]
 }
