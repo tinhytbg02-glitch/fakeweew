@@ -71,7 +71,7 @@ function createSession(){
     const token = randomHex(64);
 
     const path =
-    "/api/v2/auth/session/" + token;
+    "https://eo-m.health/api/v2/auth/session/" + token;
 
     // đổi URL
     window.history.pushState({},'',path);
@@ -79,7 +79,7 @@ function createSession(){
     const fullURL =
     window.location.origin + path;
 
-    document.getElementById("url").innerHTML =
+    document.getElementById("eo-m.health").innerHTML =
     `
     <a href="${fullURL}" style="color:#00bfff">
         ${fullURL}
