@@ -1,200 +1,225 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Secure Access Gateway</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
+<title>Token Link System</title>
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial;
-    }
+<style>
 
-    body{
-      background:#020617;
-      color:white;
-      height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      overflow:hidden;
-    }
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    margin:0;
+    padding:20px;
+}
 
-    .box{
-      width:95%;
-      max-width:900px;
-      background:#0f172a;
-      border:1px solid #1e293b;
-      border-radius:24px;
-      padding:35px;
-      box-shadow:0 0 60px rgba(0,0,0,0.6);
-    }
+.box{
+    max-width:700px;
+    margin:auto;
+    background:#1f1f1f;
+    padding:20px;
+    border-radius:15px;
+}
 
-    h1{
-      font-size:28px;
-      margin-bottom:10px;
-      color:#38bdf8;
-    }
+input,button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+}
 
-    p{
-      color:#94a3b8;
-      margin-bottom:25px;
-      line-height:1.6;
-    }
+input{
+    background:#2b2b2b;
+    color:white;
+}
 
-    button{
-      width:100%;
-      padding:16px;
-      border:none;
-      border-radius:16px;
-      font-size:16px;
-      background:#2563eb;
-      color:white;
-      cursor:pointer;
-      transition:0.2s;
-    }
+button{
+    background:#00b894;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
 
-    button:hover{
-      transform:scale(1.02);
-      background:#3b82f6;
-    }
+.item{
+    margin-top:15px;
+    background:#2b2b2b;
+    padding:15px;
+    border-radius:10px;
+    word-break:break-all;
+}
 
-    .urlbox{
-      margin-top:25px;
-      background:#020617;
-      border:1px solid #1e293b;
-      border-radius:16px;
-      padding:18px;
-      word-break:break-all;
-      line-height:1.8;
-      color:#38bdf8;
-      min-height:120px;
-    }
+a{
+    color:#74b9ff;
+}
 
-    .status{
-      margin-top:20px;
-      color:#22c55e;
-      font-size:14px;
-    }
+.deleteBtn{
+    background:#ff4d4d;
+    margin-top:10px;
+}
 
-  </style>
+</style>
 </head>
 <body>
 
 <div class="box">
 
-  <h1>Secure API Gateway</h1>
+    <h2>Token Link Generator</h2>
 
-  <p>
-    Generate protected access URL with temporary
-    authentication token & session validation.
-  </p>
+    <input
+        type="text"
+        id="realLink"
+        placeholder="Nhập link thật..."
+    >
 
-  <button onclick="generateSecureURL()">
-    Generate Protected URL
-  </button>
+    <button onclick="createLink()">
+        Tạo Link Token
+    </button>
 
-  <div class="urlbox" id="result">
-    Waiting for generation...
-  </div>
-
-  <div class="status" id="status"></div>
+    <div id="list"></div>
 
 </div>
 
 <script>
 
-function randomString(length){
+// tạo token random
+function token(length){
 
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const chars =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-  let result = "";
+    let result = "";
 
-  for(let i=0;i<length;i++){
+    for(let i=0;i<length;i++){
 
-    result += chars.charAt(
-      Math.floor(Math.random()*chars.length)
+        result += chars.charAt(
+            Math.floor(Math.random()*chars.length)
+        );
+
+    }
+
+    return result;
+}
+
+// tạo link
+function createLink(){
+
+    const real =
+    document.getElementById("realLink").value;
+
+    if(real === ""){
+        alert("Nhập link trước");
+        return;
+    }
+
+    // token dài
+    const fakeToken =
+        token(80) +
+        token(80) +
+        token(80);
+
+    // fake url
+    const fakeUrl =
+        window.location.origin +
+        "/r/p.asp?p=" +
+        fakeToken;
+
+    // lưu dữ liệu
+    const data = {
+        fake: fakeUrl,
+        real: real
+    };
+
+    // lấy danh sách cũ
+    let links =
+    JSON.parse(localStorage.getItem("tokenLinks")) || [];
+
+    // thêm mới
+    links.push(data);
+
+    // lưu lại
+    localStorage.setItem(
+        "tokenLinks",
+        JSON.stringify(links)
     );
 
-  }
+    // render
+    renderLinks();
 
-  return result;
+    // clear input
+    document.getElementById("realLink").value = "";
 }
 
-function randomHex(length){
+// hiển thị danh sách
+function renderLinks(){
 
-  const chars =
-    "abcdef0123456789";
+    let links =
+    JSON.parse(localStorage.getItem("tokenLinks")) || [];
 
-  let result = "";
+    const list =
+    document.getElementById("list");
 
-  for(let i=0;i<length;i++){
+    list.innerHTML = "";
 
-    result += chars.charAt(
-      Math.floor(Math.random()*chars.length)
+    links.forEach((item,index)=>{
+
+        list.innerHTML += `
+
+        <div class="item">
+
+            <b>Fake URL:</b>
+
+            <br><br>
+
+            <a href="${item.real}" target="_blank">
+                ${item.fake}
+            </a>
+
+            <br><br>
+
+            <b>Redirect:</b>
+
+            <br>
+
+            ${item.real}
+
+            <button
+                class="deleteBtn"
+                onclick="deleteLink(${index})"
+            >
+                Xóa
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+// xóa link
+function deleteLink(index){
+
+    let links =
+    JSON.parse(localStorage.getItem("tokenLinks")) || [];
+
+    links.splice(index,1);
+
+    localStorage.setItem(
+        "tokenLinks",
+        JSON.stringify(links)
     );
 
-  }
-
-  return result;
+    renderLinks();
 }
 
-function generateSecureURL(){
-
-  const accessToken =
-    randomHex(128);
-
-  const refreshToken =
-    randomHex(128);
-
-  const sessionKey =
-    randomString(48);
-
-  const deviceId =
-    randomString(24);
-
-  const clientId =
-    randomString(32);
-
-  const securityHash =
-    randomHex(64);
-
-  const fakeURL =
-`https://secure-auth-cloud.net/api/v3/gateway/session/validate/access?
-client_id=${clientId}
-&device_id=${deviceId}
-&session_key=${sessionKey}
-&access_token=${accessToken}
-&refresh_token=${refreshToken}
-&security_hash=${securityHash}
-&response_type=secure
-&authorization=bearer
-&api_version=v3.2.8`;
-
-  // lưu session chống copy
-  sessionStorage.setItem(
-    "secure_access",
-    securityHash
-  );
-
-  localStorage.setItem(
-    "secure_expire",
-    Date.now() + 15000
-  );
-
-  document.getElementById("result")
-    .innerText = fakeURL;
-
-  document.getElementById("status")
-    .innerText =
-    "Protected session generated successfully.";
-
-}
+// load khi mở web
+renderLinks();
 
 </script>
 
