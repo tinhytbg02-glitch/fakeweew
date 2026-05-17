@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/abcdehvtncc?=0/:path*",
+      "source": "/api/:path*",
       "destination": "eo-m.health"
     }
   ]
