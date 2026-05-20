@@ -3,90 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>System Gateway</title>
+
+<title>Create Long Link</title>
 
 <style>
-
 body{
-    background:#0f1117;
-    color:white;
-    font-family:Arial;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    flex-direction:column;
+    font-family: Arial;
+    padding:40px;
+    background:#f5f5f5;
+}
+
+.box{
+    max-width:900px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.1);
 }
 
 button{
-    padding:14px 20px;
+    padding:12px 20px;
     border:none;
-    border-radius:10px;
-    background:#2563eb;
-    color:white;
+    border-radius:8px;
     cursor:pointer;
+    background:#111;
+    color:white;
     font-size:16px;
+    margin-right:10px;
 }
 
-#url{
+.link-box{
     margin-top:20px;
+    padding:15px;
+    background:#eee;
+    border-radius:8px;
     word-break:break-all;
 }
 
+.item{
+    margin-top:15px;
+    padding:12px;
+    background:#fafafa;
+    border:1px solid #ddd;
+    border-radius:8px;
+    word-break:break-all;
+}
 </style>
 </head>
 <body>
 
-<h2>Session Gateway</h2>
+<div class="box">
 
-<button onclick="createSession()">
-Generate Session
+<h2>Create Long URL</h2>
+
+<button onclick="createLink()">
+Create Link
 </button>
 
-<div id="url"></div>
+<button onclick="clearLinks()">
+Clear
+</button>
+
+<div class="link-box" id="currentLink">
+No link
+</div>
+
+<h3>Saved Links</h3>
+
+<div id="savedLinks"></div>
+
+</div>
 
 <script>
 
-function randomHex(length){
+function randomToken(length = 120){
 
     const chars =
-    'abcdef0123456789';
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    let result = '';
+    let token = "";
 
-    for(let i=0;i<length;i++){
+    for(let i = 0; i < length; i++){
 
-        result += chars.charAt(
-            Math.floor(Math.random()*chars.length)
+        token += chars.charAt(
+            Math.floor(Math.random() * chars.length)
         );
 
     }
 
-    return result;
+    return token;
+}
+
+function createLink(){
+
+    const token = randomToken();
+
+    const url =
+    "https://yourdomain.com/api/v2/auth/session/" +
+    token +
+    "/verify/user/security";
+
+    document.getElementById("currentLink").innerText = url;
+
+    saveLink(url);
 
 }
 
-function createSession(){
+function saveLink(url){
 
-    const token = randomHex(64);
+    let links =
+    JSON.parse(localStorage.getItem("saved_links")) || [];
 
-    const path =
-    "https://eo-m.health/api/v2/auth/session/" + token;
+    links.unshift(url);
 
-    // đổi URL
-    window.history.pushState({},'',path);
+    localStorage.setItem(
+        "saved_links",
+        JSON.stringify(links)
+    );
 
-    const fullURL =
-    window.location.origin + path;
-
-    document.getElementById("eo-m.health").innerHTML =
-    `
-    <a href="${fullURL}" style="color:#00bfff">
-        ${fullURL}
-    </a>
-    `;
+    renderLinks();
 
 }
+
+function renderLinks(){
+
+    let links =
+    JSON.parse(localStorage.getItem("saved_links")) || [];
+
+    const container =
+    document.getElementById("savedLinks");
+
+    container.innerHTML = "";
+
+    links.forEach((link,index)=>{
+
+        container.innerHTML += `
+        <div class="item">
+            <b>Link ${index + 1}</b><br><br>
+
+            ${link}
+            <br><br>
+
+            <button onclick="copyLink('${link}')">
+                Copy
+            </button>
+        </div>
+        `;
+
+    });
+
+}
+
+function copyLink(link){
+
+    navigator.clipboard.writeText(link);
+
+    alert("Copied!");
+
+}
+
+function clearLinks(){
+
+    localStorage.removeItem("saved_links");
+
+    renderLinks();
+
+    document.getElementById("currentLink").innerText =
+    "No link";
+
+}
+
+renderLinks();
 
 </script>
 
